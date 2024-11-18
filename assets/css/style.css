@@ -1,0 +1,43 @@
+/* Custom styles */
+body {
+    background-color: #f8f9fa;
+}
+
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.research-item {
+    transition: transform 0.2s;
+}
+
+.research-item:hover {
+    transform: translateY(-5px);
+}
+
+.login-form, .register-form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.dashboard-stats {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.metadata-section {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.visualization-container {
+    min-height: 300px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+}
