@@ -14,3 +14,4 @@ require_once 'config/config.php';
 require_once 'includes/auth.php';
 require_once 'includes/db_functions.php';
 require_once 'includes/file_functions.php';
+require_once 'includes/project_functions.php';

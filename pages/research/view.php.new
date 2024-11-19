@@ -18,7 +18,7 @@ if (!$project_id) {
 }
 
 // Get project details
-$project = getProjectDetailsSecure($project_id, $_SESSION['user_id']);
+$project = getProjectDetails($project_id, $_SESSION['user_id']);
 if (!$project) {
     echo '<div class="container mt-4"><div class="alert alert-danger">Project not found or you don\'t have permission to view it.</div></div>';
     require_once 'includes/footer.php';
