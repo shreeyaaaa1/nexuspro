@@ -153,11 +153,16 @@ function getProjectDetails($project_id, $user_id) {
     try {
         // Get project details with permission check
         $stmt = $conn->prepare("
-            SELECT p.* FROM research_projects p
+            SELECT p.id, p.user_id, p.title, p.description, p.metadata, p.created_at, p.updated_at FROM research_projects p
             LEFT JOIN collaborators c ON p.id = c.project_id AND c.user_id = ?
-            WHERE p.id = ? AND (p.user_id = ? OR c.user_id IS NOT NULL)
+            WHERE p.id = ? AND (p.user_id = ? OR c.user_id = ?)
         ");
-        $stmt->execute([$user_id, $project_id, $user_id]);
+        $stmt->execute([$user_id, $project_id, $user_id, $user_id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$result) {
+            error_log("Project $project_id not found or access denied for user $user_id");
+        }
+        return $result;
         return $stmt->fetch(PDO::FETCH_ASSOC);
     } catch(PDOException $e) {
         return null;

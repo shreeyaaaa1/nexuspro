@@ -33,7 +33,7 @@ switch($action) {
         
     case 'view':
         $project_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-        $project = getProjectDetails($project_id, $user_id);
+        $project = getProjectDetailsSecure($project_id, $user_id);
         
         if(!$project) {
             echo "<div class='alert alert-danger'>Project not found</div>";
