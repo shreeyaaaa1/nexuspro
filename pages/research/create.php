@@ -1,10 +1,119 @@
 <div class="container">
-    <h2>Create New Research Project</h2>
+    <h2>Add Your Research Project</h2>
     
-    <?php if(isset($error)): ?>
-        <div class="alert alert-danger"><?php echo $error; ?></div>
-    <?php endif; ?>
+    <?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $error = '';
+    $uploadedFiles = [];
+    $allowedTypes = ['image/jpeg', 'image/png', 'application/pdf', 'application/msword', 'application/vnd.ms-excel', 'video/mp4'];
+
+    // Check if files were uploaded
+    if (isset($_FILES['files']) && !empty($_FILES['files']['name'][0])) {
+        $files = $_FILES['files'];
+
+        // Loop through each uploaded file
+        for ($i = 0; $i < count($files['name']); $i++) {
+            $fileName = $files['name'][$i];
+            $fileTmpName = $files['tmp_name'][$i];
+            $fileSize = $files['size'][$i];
+            $fileError = $files['error'][$i];
+            $fileType = $files['type'][$i];
+
+            // Check for file upload errors
+            if ($fileError !== UPLOAD_ERR_OK) {
+                $error .= "Error uploading file: $fileName.<br>";
+                continue;
+            }
+
+            // Check if file type is allowed
+            if (!in_array($fileType, $allowedTypes)) {
+                $error .= "File type not allowed: $fileName.<br>";
+                continue;
+            }
+
+            // Set the file upload directory
+            $uploadDir = 'uploads/research_files/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true); // Create directory if it doesn't exist
+            }
+
+            // Create a unique name for the file to avoid conflicts
+            $fileDestination = $uploadDir . uniqid('', true) . '-' . basename($fileName);
+
+            // Move the file to the upload directory
+            if (move_uploaded_file($fileTmpName, $fileDestination)) {
+                $uploadedFiles[] = [
+                    'name' => $fileName,
+                    'type' => $fileType,
+                    'path' => $fileDestination
+                ];
+            } else {
+                $error .= "Failed to upload file: $fileName.<br>";
+            }
+        }
+    } else {
+        $error .= "No files selected.<br>";
+    }
+
+    // If there are any errors, display them
+    if ($error) {
+        echo "<div class='alert alert-danger'>$error</div>";
+    }
+
+    if (!empty($uploadedFiles)) {
+        echo "<h5>Uploaded Files:</h5>";
+        echo "<ul>";
+        foreach ($uploadedFiles as $file) {
+            echo "<li><strong>File Name:</strong> {$file['name']}<br>
+                      <strong>File Type:</strong> {$file['type']}<br>
+                      <strong>File Path:</strong> {$file['path']}</li><br>";
+        }
+        echo "</ul>";
+    }
     
+    // File type statistics initialization
+$fileTypeCounts = [
+    'image' => 0,
+    'video' => 0,
+    'document' => 0,
+    'other' => 0
+];
+
+// File types
+$imageTypes = ['image/jpeg', 'image/png'];
+$videoTypes = ['video/mp4'];
+$documentTypes = ['application/pdf', 'application/msword', 'application/vnd.ms-excel'];
+
+foreach ($uploadedFiles as $file) {
+    if (in_array($file['type'], $imageTypes)) {
+        $fileTypeCounts['image']++;
+    } elseif (in_array($file['type'], $videoTypes)) {
+        $fileTypeCounts['video']++;
+    } elseif (in_array($file['type'], $documentTypes)) {
+        $fileTypeCounts['document']++;
+    } else {
+        $fileTypeCounts['other']++;
+    }
+}
+
+// Calculate total files uploaded
+$totalFiles = array_sum($fileTypeCounts);
+
+// Display file type distribution
+if ($totalFiles > 0) {
+    echo "<h5>File Type Distribution</h5>";
+    echo "<ul>";
+    echo "<li>Images: " . round(($fileTypeCounts['image'] / $totalFiles) * 100, 2) . "%</li>";
+    echo "<li>Videos: " . round(($fileTypeCounts['video'] / $totalFiles) * 100, 2) . "%</li>";
+    echo "<li>Documents: " . round(($fileTypeCounts['document'] / $totalFiles) * 100, 2) . "%</li>";
+    echo "<li>Other: " . round(($fileTypeCounts['other'] / $totalFiles) * 100, 2) . "%</li>";
+    echo "</ul>";
+} else {
+    echo "<p>No files uploaded yet.</p>";
+}
+}
+?>
+  
     <form method="POST" action="" class="needs-validation" novalidate>
         <div class="mb-3">
             <label for="title" class="form-label">Project Title *</label>
@@ -44,6 +153,11 @@
                     <option value="completed">Completed</option>
                     <option value="archived">Archived</option>
                 </select>
+            </div>
+            <div class="mb-3">
+            <label for="files" class="form-label">Upload Files</label>
+            <input type="file" class="form-control" id="files" name="files[]" multiple>
+            <small class="form-text text-muted">You can upload multiple files from one folder (images, documents, etc.).</small>
             </div>
         </div>
         

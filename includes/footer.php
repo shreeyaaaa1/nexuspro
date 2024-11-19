@@ -1,8 +1,7 @@
-</div>
     <footer class="bg-light py-4 mt-5">
         <div class="container">
             <div class="text-center">
-                <p>&copy; <?php echo date('Y'); ?> <?php echo SITE_NAME; ?>. All rights reserved.</p>
+                <p><?php echo SITE_NAME; ?> &copy; <?php echo date('Y'); ?>  All rights reserved. </p>
             </div>
         </div>
     </footer>

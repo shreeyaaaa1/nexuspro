@@ -44,5 +44,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     <div class="text-center mt-3">
         <p>Don't have an account? <a href="index.php?page=register">Register here</a></p>
+        <p><a href="forgot_password.php">Forgot your password?</a></p>
+        
     </div>
 </div>

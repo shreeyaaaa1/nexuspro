@@ -1,6 +1,6 @@
 <div class="jumbotron text-center py-5 bg-light">
     <h1 class="display-4">Welcome to NexusDoc</h1>
-    <p class="lead">A comprehensive platform for managing research data and collaboration.</p>
+    <p class="lead">A comprehensive platform for managing research project and data.</p>
     <?php if(!isLoggedIn()): ?>
         <a href="index.php?page=register" class="btn btn-primary btn-lg">Get Started</a>
     <?php endif; ?>
