@@ -1,4 +1,7 @@
 <?php
+// start output buffering
+ob_start();
+require_once 'includes/auth.php';
 if(isLoggedIn()) {
     header('Location: index.php?page=dashboard');
     exit();

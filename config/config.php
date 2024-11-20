@@ -6,8 +6,8 @@ define('DB_PASS', getenv('DB_PASS') ?: 'secret_password');
 define('DB_NAME', getenv('DB_NAME') ?: 'rcmwa_db');
 
 // Application configuration
-define('SITE_NAME', 'Research Content Management Web Application');
-define('SITE_URL', 'http://localhost/rcmwa');
+define('SITE_NAME', 'NexusDoc - Your Research Data Manager');
+define('SITE_URL', 'http://localhost/index.php');
 
 // Establish database connection
 try {

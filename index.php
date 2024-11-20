@@ -1,11 +1,11 @@
 <?php
 session_start();
-require_once 'config/config.php';
+require_once 'includes/init.php';
 require_once 'includes/auth.php';
 
 // Route handling
 $page = isset($_GET['page']) ? $_GET['page'] : 'home';
-$allowed_pages = ['home', 'login', 'register', 'dashboard', 'research', 'profile'];
+$allowed_pages = ['home', 'login', 'register', 'dashboard', 'research', 'profile', 'reports'];
 
 if (!in_array($page, $allowed_pages)) {
     $page = 'home';

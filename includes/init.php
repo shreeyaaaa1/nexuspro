@@ -10,8 +10,8 @@ ini_set('upload_max_filesize', getenv('MAX_UPLOAD_SIZE'));
 ini_set('post_max_size', getenv('MAX_UPLOAD_SIZE'));
 
 // Required files
-require_once 'config/config.php';
-require_once 'includes/auth.php';
-require_once 'includes/db_functions.php';
-require_once 'includes/file_functions.php';
-require_once 'includes/project_functions.php';
+require_once dirname(__FILE__) . '/../config/config.php';
+require_once dirname(__FILE__) . '/auth.php';
+require_once dirname(__FILE__) . '/db_functions.php';
+require_once dirname(__FILE__) . '/file_functions.php';
+require_once dirname(__FILE__) . '/project_functions.php';
