@@ -1,31 +1,35 @@
+version: '3.8'
+
 services:
   app:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: .  # Context for building the Docker image
+      dockerfile: Dockerfile  # Specify the Dockerfile to use
     ports:
-      - "80:80"
+      - "80:80"  # Expose port 80
     volumes:
-      - .:/var/www/html
+      - .:/var/www/html  # Mount the current directory to the container's document root
     depends_on:
-      - mysql
+      - mysql  # Ensure MySQL starts before the app
     environment:
-      - DB_HOST=${DB_HOST}
-      - DB_USER=${DB_USER}
-      - DB_PASS=${DB_PASS}
-      - DB_NAME=${DB_NAME}
+      - DB_HOST=${DB_HOST}  # Database host (e.g., mysql)
+      - DB_USER=${DB_USER}  # Database user
+      - DB_PASS=${DB_PASS}  # Database password
+      - DB_NAME=${DB_NAME}  # Database name
 
   mysql:
-    image: mysql:8.0
+    image: mysql:8.0  # Use the official MySQL image
+    container_name: nexuspro-mysql  # Name for the MySQL container
     ports:
-      - "3306:3306"
+      - "3307:3306"  # Expose MySQL on port 3307
     environment:
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}  # Default database to create
+      - MYSQL_USER=${MYSQL_USER}  # MySQL user
+      - MYSQL_PASSWORD=""  # Empty password for the MySQL user
+      - MYSQL_ROOT_PASSWORD=rootroot  # Root password for MySQL
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes  # Allow empty passwords for users
     volumes:
-      - mysql_data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql  # Persist MySQL data
 
 volumes:
-  mysql_data:
+  mysql_data:  

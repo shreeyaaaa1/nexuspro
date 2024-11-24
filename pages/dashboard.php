@@ -14,6 +14,7 @@
 
     $user_id = $_SESSION['user_id'];
     $research_projects = getResearchProjects($user_id);
+    
     ?>
 
     <div class="dashboard-container">

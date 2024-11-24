@@ -1,3 +1,4 @@
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <div class="container">
     <h2>Add Your Research Project</h2>
     

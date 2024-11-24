@@ -2,7 +2,7 @@
 require_once dirname(__FILE__) . '/init.php';
 
 function getReports($user_id) {
-    global $conn;
+    global $conn; // Use $conn consistently
     $stmt = $conn->prepare("
         SELECT id, title, type, created_at, from_date, to_date, content 
         FROM reports 
@@ -14,8 +14,8 @@ function getReports($user_id) {
 }
 
 function getReport($report_id, $user_id) {
-    global $db;
-    $stmt = $db->prepare("
+    global $conn; // Use $conn consistently
+    $stmt = $conn->prepare("
         SELECT id, title, type, created_at, from_date, to_date, content 
         FROM reports 
         WHERE id = ? AND user_id = ?
@@ -27,14 +27,14 @@ function getReport($report_id, $user_id) {
 }
 
 function generateReport($data) {
-    global $conn;
+    global $conn; // Use $conn consistently
     
     // Start transaction
     $conn->beginTransaction();
     
     try {
         // Insert report metadata
-        $stmt = $db->prepare("
+        $stmt = $conn->prepare(" // Use $conn consistently
             INSERT INTO reports (user_id, title, type, from_date, to_date, created_at) 
             VALUES (?, ?, ?, ?, ?, NOW())
         ");
@@ -46,32 +46,31 @@ function generateReport($data) {
             $data['to_date']
         );
         $stmt->execute();
-        $report_id = $db->insert_id;
-        
+        $report_id = (string)$conn->insert_id;        
         // Generate report content based on type
         $content = generateReportContent($data['type'], $data['user_id'], $data['from_date'], $data['to_date']);
         
         // Update report with content
-        $stmt = $db->prepare("UPDATE reports SET content = ? WHERE id = ?");
+        $stmt = $conn->prepare("UPDATE reports SET content = ? WHERE id = ?"); // Use $conn consistently
         $stmt->bind_param("si", $content, $report_id);
         $stmt->execute();
         
-        $db->commit();
+        $conn->commit(); // Use $conn consistently
         return $report_id;
     } catch (Exception $e) {
-        $db->rollback();
+        $conn->rollback(); // Use $conn consistently
         return false;
     }
 }
 
 function generateReportContent($type, $user_id, $from_date, $to_date) {
-    global $db;
+    global $conn; // Use $conn consistently
     $content = '';
     
     switch ($type) {
         case 'research_summary':
             // Get research projects created in date range
-            $stmt = $db->prepare("
+            $stmt = $conn->prepare(" // Use $conn consistently
                 SELECT title, description, created_at 
                 FROM projects 
                 WHERE user_id = ? AND created_at BETWEEN ? AND ?
@@ -94,7 +93,7 @@ function generateReportContent($type, $user_id, $from_date, $to_date) {
             
         case 'project_progress':
             // Get project updates in date range
-            $stmt = $db->prepare("
+            $stmt = $conn->prepare(" // Use $conn consistently
                 SELECT p.title as project_title, u.content, u.created_at 
                 FROM project_updates u 
                 JOIN projects p ON u.project_id = p.id 
@@ -119,7 +118,7 @@ function generateReportContent($type, $user_id, $from_date, $to_date) {
             
         case 'activity_log':
             // Get user activity in date range
-            $stmt = $db->prepare("
+            $stmt = $conn->prepare(" // Use $conn consistently
                 SELECT activity_type, description, created_at 
                 FROM activity_log 
                 WHERE user_id = ? AND created_at BETWEEN ? AND ?
@@ -144,3 +143,4 @@ function generateReportContent($type, $user_id, $from_date, $to_date) {
     
     return $content;
 }
+?>

@@ -4,10 +4,13 @@ define('DB_HOST', getenv('DB_HOST') ?: 'mysql');
 define('DB_USER', getenv('DB_USER') ?: 'rcmwa_user');
 define('DB_PASS', getenv('DB_PASS') ?: 'secret_password');
 define('DB_NAME', getenv('DB_NAME') ?: 'rcmwa_db');
+define('BASE_PATH', realpath(dirname(__FILE__) . '/..'));
+
 
 // Application configuration
 define('SITE_NAME', 'NexusDoc - Your Research Data Manager');
 define('SITE_URL', 'http://localhost/index.php');
+
 
 // Establish database connection
 try {

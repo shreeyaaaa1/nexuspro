@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../includes/db_functions.php';
+
 // start output buffering
 ob_start();
 require_once 'includes/auth.php';
@@ -7,33 +9,47 @@ if(isLoggedIn()) {
     exit();
 }
 
-if($_SERVER['REQUEST_METHOD'] == 'POST') {
-    require_once 'includes/db_functions.php';
-    
-    $name = validateInput($_POST['name']);
-    $email = validateInput($_POST['email']);
-    $password = $_POST['password'];
-    $confirm_password = $_POST['confirm_password'];
-    
-    if(empty($name) || empty($email) || empty($password) || empty($confirm_password)) {
-        $error = "Please fill in all fields";
-    } elseif($password !== $confirm_password) {
-        $error = "Passwords do not match";
-    } else {
-        $result = registerUser($name, $email, $password);
-        if($result === true) {
-            header('Location: index.php?page=login');
-            exit();
-        } else {
-            $error = $result;
-        }
+// Check if the user is logged in
+if (isLoggedIn()) {
+  if ($_SESSION['role'] !== 'admin') {
+      // Redirect logged-in users who are not admin
+      header('Location: index.php?page=dashboard');
+      exit();
+  }
+}
+
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+  $name = validateInput($_POST['name']);
+  $email = validateInput($_POST['email']);
+  $password = $_POST['password'];
+  $confirm_password = $_POST['confirm_password'];
+  $role = isset($_POST['role']) ? $_POST['role'] : 'user'; // Default to 'user'
+
+  if (empty($name) || empty($email) || empty($password) || empty($confirm_password)) {
+    $error = "Please fill in all fields";
+} elseif ($password !== $confirm_password) {
+    $error = "Passwords do not match";
+} else {
+    // Check if the current session role allows role assignment
+    if ($_SESSION['role'] !== 'admin') {
+        $role = 'user'; // Enforce 'user' role for non-admins
     }
+
+    $result = registerUser($name, $email, $password, $role); // Updated to include role
+    if ($result === true) {
+        header('Location: index.php?page=login');
+        exit();
+    } else {
+        $error = $result;
+    }
+}
 }
 ?>
 
 <div class="register-form">
     <h2 class="text-center mb-4">Register</h2>
-    <?php if(isset($error)): ?>
+    <?php if (isset($error)): ?>
         <div class="alert alert-danger"><?php echo $error; ?></div>
     <?php endif; ?>
     
@@ -54,7 +70,21 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             <label for="confirm_password" class="form-label">Confirm Password</label>
             <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
         </div>
-        <button type="submit" class="btn btn-primary w-100">Register</button>
+        
+        <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+            <div class="mb-3">
+                <label for="role" class="form-label">Role</label>
+                <select class="form-control" id="role" name="role">
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+        <?php endif; ?>
+
+        <!-- Register Button with Icon -->
+        <button type="submit" class="btn btn-primary w-100">
+            <i class="fas fa-user-plus btn-icon"></i> Register
+        </button>
     </form>
     
     <div class="text-center mt-3">
@@ -62,16 +92,15 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 </div>
 
-
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
 
-    body {
+  body {
     background-color: #a4c0a2; 
     color: #000; 
     font-family: 'Playfair Display', serif; /* Apply the font */
     overflow: hidden; /* To prevent scrollbars with the angled background */
-}
+  }
 
   .register-form {
     background-color: #fff; 
@@ -87,26 +116,29 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
   }
 
   .form-control {
-    adding: 12px 15px; /* Increase padding */
+    padding: 12px 15px; /* Increased padding for better usability */
     font-size: 16px;
     background-color: #343a40; 
     color: #fff;
   }
 
   .btn-primary {
-    padding: 12px 20px; /* Increase padding */
+    padding: 12px 20px; /* Increased padding for better button size */
     font-size: 18px;
     font-weight: 700;
     background-image: linear-gradient(to right, #007bff, #0056b3); /* Blue gradient */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow */
     position: relative; /* To position the pseudo-element */
     overflow: hidden; /* To contain the animation */
-    
   }
 
   .btn-primary:hover {
     background-image: linear-gradient(to right, #0069d9, #0049a3); /* Darker blue gradient on hover */
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3); /* More pronounced shadow */
+  }
+
+  .btn-icon {
+    margin-right: 8px;
   }
 
   .register-form::before {
@@ -116,9 +148,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #8ab4f8; /* Blue color */
-    transform: skewY(-5deg); /* Skew the element */
-    z-index: -1; /* Place it behind the form */
+    background-color: #8ab4f8; /* Blue background */
+    transform: skewY(-5deg); /* Skew the background */
+    z-index: -1; /* Behind the form */
   }
 
   @keyframes ripple {
@@ -128,6 +160,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
   }
 
+  /* Add floating paper icons animation */
   .paper-icon {
     position: absolute;
     width: 40px;
@@ -156,6 +189,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     top: 10%;
     animation-delay: 5s;
   }
+
   .paper-icon-4 {
     left: 70%;
     top: 50%;

@@ -1,6 +1,6 @@
 <?php
 function isLoggedIn() {
-    return isset($_SESSION['user_id']);
+    return isset($_SESSION['id']) && isset($_SESSION['role']);
 }
 
 function requireLogin() {

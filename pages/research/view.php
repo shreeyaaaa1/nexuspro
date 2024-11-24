@@ -24,6 +24,9 @@ if (!$project) {
     require_once 'includes/footer.php';
     exit();
 }
+
+// Get file data counts for visualizations
+$fileDataCounts = getFileDataCounts($project_id); // This function needs to be defined in your backend
 ?>
 <div class="container">
     <div class="row mb-4">
@@ -50,8 +53,9 @@ if (!$project) {
                 <div class="card-body">
                     <h5 class="card-title">Research Data</h5>
                     <div class="visualization-container">
-                        <!-- Add data visualizations here -->
-                        <p class="text-muted">Data visualizations will be displayed here.</p>
+                        <h6>File Type Distribution</h6>
+                        <canvas id="barChart"></canvas>
+                        <canvas id="pieChart" class="mt-4"></canvas>
                     </div>
                 </div>
             </div>
@@ -73,5 +77,63 @@ if (!$project) {
                     </div>
                     
                     <hr>
-                    
-                    <div class="metadata-item">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const fileDataCounts = <?php echo json_encode($fileDataCounts); ?>;
+
+    const labels = Object.keys(fileDataCounts); // ['pdf', 'audio', 'video']
+    const data = Object.values(fileDataCounts); // [2, 3, 3]
+
+    // Bar Chart
+    const barCtx = document.getElementById('barChart').getContext('2d');
+    new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Number of Files',
+                data: data,
+                backgroundColor: ['#007bff', '#28a745', '#ffc107', '#17a2b8'],
+                borderColor: '#333',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+
+    // Pie Chart
+    const pieCtx = document.getElementById('pieChart').getContext('2d');
+    new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: ['#007bff', '#28a745', '#ffc107', '#17a2b8'],
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' }
+            }
+        }
+    });
+});
+</script>
+<?php
+require_once 'includes/footer.php';
+?>

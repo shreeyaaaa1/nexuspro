@@ -1,3 +1,4 @@
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <div class="container">
     <div class="row mb-4">
         <div class="col-md-8">

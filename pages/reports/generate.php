@@ -78,6 +78,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <option value="activity_log" <?php echo (isset($type) && $type === 'activity_log') ? 'selected' : ''; ?>>Activity Log</option>
             </select>
         </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Report Description</label>
+            <textarea class="form-control" id="description" name="description" rows="4"></textarea>
+        </div>
 
         <div class="row">
             <div class="col-md-6">

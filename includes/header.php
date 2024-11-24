@@ -26,7 +26,15 @@
                     <li class="nav-item">
                         <a class="nav-link" href="index.php">Home</a>
                     </li>
-                    <?php if(isset($_SESSION['user_id'])): ?>
+                    <?php if(isset($_SESSION['role'])): ?>
+                        <?php if ($_SESSION['role'] === 'admin'): ?>
+                            <li class="nav-item">
+                                <a class="nav-link" href="index.php?page=admin_dashboard">Admin Dashboard</a>
+                            </li>
+                            <?php else: ?>
+                            <a href="index.php?page=user_dashboard">User Dashboard</a>
+                        <?php endif; ?> 
+                        <a href="logout.php">Logout</a>
                         <li class="nav-item">
                             <a class="nav-link" href="index.php?page=dashboard">Dashboard</a>
                         </li>

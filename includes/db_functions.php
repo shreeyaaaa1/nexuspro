@@ -18,26 +18,26 @@ function loginUser($email, $password) {
     }
 }
 
-function registerUser($name, $email, $password) {
-    global $conn;
-    
-    try {
-        // Check if email already exists
-        $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
-        $stmt->execute([$email]);
-        if($stmt->fetch()) {
-            return "Email already exists";
-        }
-        
-        // Hash password and insert user
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $conn->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
-        $stmt->execute([$name, $email, $hashed_password]);
+function registerUser($name, $email, $password, $role = 'user') {
+    $conn = connectToDatabase();
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+    $query = "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("ssss", $name, $email, $hashed_password, $role);
+
+    if ($stmt->execute()) {
+        $stmt->close();
+        $conn->close();
         return true;
-    } catch(PDOException $e) {
-        return "Database error: " . $e->getMessage();
+    } else {
+        $error = $stmt->error;
+        $stmt->close();
+        $conn->close();
+        return "Error: $error";
     }
 }
+
 
 function getResearchProjects($user_id) {
     global $conn;
